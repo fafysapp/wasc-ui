@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Prediction - WhatsApp Status Count</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap">
+    <link rel="stylesheet" href="./style.css"/>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <style>
+       
+    </style>
+</head>
+<body  >
+    <div id="particles-js"></div>
+    <div class="overlay" id="popup">
+        <div class="popup">
+            <span class="close-btn" onclick="togglePopup()">&times;</span>
+            <p class="titleStatus">Status count is</p>
+            <span class="statusCount gradient-text" id="statusCountText"></span>
+            <div class="text-loader" id="predictingCountText">
+                
+                <span>AI is Predicting</span>
+                <span>.</span>
+                <span>. </span>
+                <span>.</span>
+            </div>
+            <input type="button" value="Close" id="closeBtn" onclick="togglePopup()">
+
+        </div>
+    </div>
+    <div class="container">
+        <h1>Upload Screenshot <br>(with Viewed by)</h1>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <div class="upload-btn-wrapper">
+                <button class="btn" id="chooseImageText">Choose Image</button>
+                <input type="hidden" value="secretkey" name="api_key" >
+                <input type="file" name="file" id="chooseImage" accept="image/*" required>
+            </div>
+            <input type="button" value="Submit" id="submitBtn">
+        </form>
+    </div>
+
+    <br>
+    <div class="container container2">
+        <h1>Upload Screenshot <br>(normal)</h1>
+        <form id="uploadForm_v2" enctype="multipart/form-data">
+            <div class="upload-btn-wrapper">
+                <button class="btn" id="chooseImageText_v2">Choose Image</button>
+                <input type="hidden" value="secretkey" name="api_key" >
+                <input type="file" name="file" id="chooseImage_v2" accept="image/*" required>
+            </div>
+            <input type="button" value="Submit" id="submitBtn_v2">
+        </form>
+    </div>
+
+    <script src="particles.min.js"></script>
+    <script src="./app.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("#chooseImage").change(function(){
+                console.log("dada");
+                console.log(this.files[0].name);
+                $("#chooseImageText").text(this.files[0].name);
+            });
+            $("#submitBtn").on("click", function () {
+                togglePopup();
+                var formData = new FormData($("#uploadForm")[0]);
+                $("#predictingCountText").show();
+                $("#statusCountText").text("");
+
+                $.ajax({
+                    
+                    url: "https://wasc-app-hhbackhwia-el.a.run.app//predict", // Replace with your server-side script URL
+                    type: "POST",
+                    data: formData,
+                    headers: { "Accept": "application/json"},
+                    crossDomain: true,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        // Handle the success response
+                        console.log(response);
+                        $("#predictingCountText").hide();
+                        $("#statusCountText").text(response["prediction"]);
+                    },
+                    error: function (error) {
+                        // Handle the error response
+                        console.log(error);
+                    }
+                });
+            });
+
+            //v2
+            $("#chooseImage_v2").change(function(){
+                console.log("dada");
+                console.log(this.files[0].name);
+                $("#chooseImageText").text(this.files[0].name);
+            });
+            $("#submitBtn_v2").on("click", function () {
+                togglePopup();
+                var formData = new FormData($("#uploadForm_v2")[0]);
+                $("#predictingCountText").show();
+                $("#statusCountText").text("");
+
+                $.ajax({
+                    
+                    url: "https://wasc-app-hhbackhwia-el.a.run.app/predict/v2", // Replace with your server-side script URL
+                    type: "POST",
+                    data: formData,
+                    headers: { "Accept": "application/json"},
+                    crossDomain: true,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        // Handle the success response
+                        console.log(response);
+                        $("#predictingCountText").hide();
+                        $("#statusCountText").text(response["prediction"]);
+                    },
+                    error: function (error) {
+                        // Handle the error response
+                        console.log(error);
+                    }
+                });
+            });
+        });
+        function togglePopup() {
+            const popup = document.getElementById('popup');
+            popup.style.display = (popup.style.display === 'none' || popup.style.display === '') ? 'flex' : 'none';
+        }
+    </script>
+</body>
+</html>
